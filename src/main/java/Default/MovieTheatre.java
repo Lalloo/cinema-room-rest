@@ -1,9 +1,8 @@
+package Default;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MovieTheatre {
     @JsonProperty("total_rows")
@@ -39,9 +38,19 @@ public class MovieTheatre {
         this.availableSeats = availableSeats;
     }
 
-    public Optional<Seat> find(int row, int column) {
+    public Optional<Seat> findByRowColumn(int row, int column) {
         return availableSeats.stream()
                 .filter(s -> s.getColumn() == column && s.getRow() == row)
+                .findFirst();
+    }
+
+    public Optional<Seat> findByToken(String token) {
+        if (token == null) {
+            throw new SeatException("Wrong token!");
+        }
+        return availableSeats.stream()
+                .filter(s -> Objects.nonNull(s.getToken()))
+                .filter(s -> s.getToken().equals(token))
                 .findFirst();
     }
 
