@@ -1,19 +1,22 @@
 package Default;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import Default.domain.Seat;
+import Default.domain.Stats;
+import Default.exception.LoginException;
+import Default.exception.SeatException;
+import Default.response.ResponsePurchase;
+import Default.response.ResponseReturn;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.Optional;
 
 @RestController
 public class SeatController {
 
     private final MovieTheatre movieTheatre = new MovieTheatre(9, 9);
+
+    private final Stats stats = new Stats();
 
     @GetMapping("/seats")
     public MovieTheatre getAvailableSeats() {
@@ -25,15 +28,25 @@ public class SeatController {
         Seat seat = movieTheatre.findByRowColumn(request.getRow(), request.getColumn())
                 .orElseThrow(() -> new SeatException("The number of a row or a column is out of bounds!"));
         seat.tryBuy();
-
+        stats.setCurrectIncome(stats.getCurrectIncome() + seat.getPrice());
+        stats.setNumberOfAvailableSeats(stats.getNumberOfAvailableSeats() - 1);
+        stats.setNumberOfPurchasedTickets(stats.getNumberOfPurchasedTickets() + 1);
         return ResponsePurchase.of(seat, seat.getToken());
     }
 
     @PostMapping("/return")
     public ResponseReturn returnTicket(@RequestBody Map<String, String> payload) {
-
-        Seat abc = movieTheatre.findByToken(payload.get("token"))
+        Seat seat = movieTheatre.findByToken(payload.get("token"))
                 .orElseThrow(() -> new SeatException("Wrong token!"));
-        return ResponseReturn.of(abc);
+        stats.setCurrectIncome(stats.getCurrectIncome() - seat.getPrice());
+        stats.setNumberOfAvailableSeats(stats.getNumberOfAvailableSeats() + 1);
+        stats.setNumberOfPurchasedTickets(stats.getNumberOfPurchasedTickets() - 1);
+        return ResponseReturn.of(seat);
+    }
+
+    @PostMapping("/stats")
+    public Stats getStatistics(@RequestParam(required = false) Optional<String> password) {
+        password.filter("super_secret"::equals).orElseThrow(() -> new LoginException("The password is wrong!"));
+        return stats;
     }
 }

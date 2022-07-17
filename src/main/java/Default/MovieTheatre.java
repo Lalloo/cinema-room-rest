@@ -1,5 +1,7 @@
 package Default;
 
+import Default.domain.Seat;
+import Default.exception.SeatException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;

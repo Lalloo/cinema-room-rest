@@ -1,8 +1,7 @@
-package Default;
+package Default.response;
 
+import Default.domain.Seat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.UUID;
 
 public class ResponsePurchase {
     @JsonProperty("ticket")

@@ -1,5 +1,6 @@
-package Default;
+package Default.response;
 
+import Default.domain.Seat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResponseReturn {

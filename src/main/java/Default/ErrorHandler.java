@@ -1,5 +1,8 @@
 package Default;
 
+import Default.exception.LoginException;
+import Default.exception.SeatException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,6 +15,13 @@ public class ErrorHandler {
         Error error = new Error();
         error.setError(e.getMessage());
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<Error> handleLoginException(LoginException e, WebRequest r) {
+        Error error = new Error();
+        error.setError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     static class Error {

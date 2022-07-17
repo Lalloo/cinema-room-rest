@@ -1,8 +1,8 @@
-package Default;
+package Default.domain;
 
+import Default.exception.SeatException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class Seat {
@@ -23,7 +23,7 @@ public class Seat {
 
     public void tryBuy() {
         if (token != null)
-            throw new Default.SeatException("The ticket has been already purchased!");
+            throw new SeatException("The ticket has been already purchased!");
         token = UUID.randomUUID().toString();
     }
 

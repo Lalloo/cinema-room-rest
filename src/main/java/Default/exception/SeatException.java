@@ -1,4 +1,4 @@
-package Default;
+package Default.exception;
 
 public class SeatException extends RuntimeException {
     public SeatException(String message) {
